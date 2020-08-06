@@ -21,6 +21,8 @@ function promptInput(q) {
 	});
 }
 
+let commands = [];
+
 (async function main() {
 
 	console.log("Initializing Selenium....");
