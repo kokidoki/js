@@ -21,10 +21,10 @@ async function getLastMessage() {
 	// await driver.get("https://discord.com/channels/@me/734503544757157899");
 	//GROUP CHAT
 	// await driver.get("https://discord.com/channels/@me/729411342003339344");
-	await driver.get("https://discord.com/channels/@me/725362952718516285");
+	await driver.get("https://discord.com/channels/706559114448338944/706559116491096166");
 	let oldText = await getLastMessage();
 	let time = 0;
-	while(time <= 60) {
+	while(time <= 120) {
 		recentText = await getLastMessage();
 		time++;
 		if(oldText != recentText) {
@@ -34,7 +34,7 @@ async function getLastMessage() {
 			await textField.sendKeys(recentText);
 			await textField.sendKeys(Key.RETURN);
 		}
-		await sleep(1000);
+		await sleep(250);
 	}
 	console.log('Finished!');
 })();
