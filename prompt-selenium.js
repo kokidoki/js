@@ -65,7 +65,7 @@ async function getParams(params, descriptions) {
 		'r' : async (inputFile) => {
 			await checkFile(inputFile, async (stat) => {
 				if(stat.isFile()) {
-					stop = false;
+					stop = {stopScript: false};
 					data = await fs.promises.readFile(inputFile, "utf8");
 					if(regex = (/DESCRIPTIONS = \[.+\];/).exec(data)) {
 						params = regex[0].slice(14, regex[0].indexOf(']')).split(', ');
@@ -92,7 +92,7 @@ async function getParams(params, descriptions) {
 			console.log("Goodbye!");
 		},
 		'stop' : () => {
-			stop = true;
+			stop.stopScript = true;
 		},
 		'help' : () => {
 			console.log('Commands : \ndefault ${file}: Set file to run when no command is given.\nquit: Shut down browser & prompt loop\nr ${file}: Run a file!')

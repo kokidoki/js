@@ -16,14 +16,15 @@ async function getLastMessage() {
 }
 
 let PARAMETERS = [paramVars.checkTime, paramVars.runtime, paramVars.url];
-let DESCRIPTIONS = ['How often do you want the parrot to check for new messages(In ms)?', 'How long do you want the parrot to run(In increments of check time)?', 'The url of the chat you want to parrot'];
+let DESCRIPTIONS = ['How often do you want the parrot to check for new messages(In ms)?', 'How long do you want the parrot to run(Either in increments of run time or "infinite")?', 'The url of the chat you want to parrot'];
 
 (async function() {
 	await driver.get(paramVars.url);
 	let oldText = await getLastMessage();
-	let time = 0;
-	while(time <= paramVars.runtime) {
-		if(stop) {
+	let time = 0, infinite = false;
+	if(PARAMETERS[1].toLowerCase() === 'infinite') infinite = true
+	while(time <= paramVars.runtime || infinite) {
+		if(stop.stopScript) {
 			return;
 		}
 		recentText = await getLastMessage();
