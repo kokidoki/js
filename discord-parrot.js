@@ -1,4 +1,3 @@
-
 const {Builder, By, until, Key} = require("selenium-webdriver");
 
 function sleep(ms) {
@@ -16,15 +15,21 @@ async function getLastMessage() {
 	return text;
 }
 
+let PARAMETERS = [paramVars.checkTime, paramVars.runtime, paramVars.url];
+let DESCRIPTIONS = ['How often do you want the parrot to check for new messages(In ms)?', 'How long do you want the parrot to run(In increments of check time)?', 'The url of the chat you want to parrot'];
+
 (async function() {
 	//LILY            
 	// await driver.get("https://discord.com/channels/@me/734503544757157899");
 	//GROUP CHAT
 	// await driver.get("https://discord.com/channels/@me/729411342003339344");
-	await driver.get("https://discord.com/channels/706559114448338944/706559116491096166");
+	await driver.get(paramVars.url);
 	let oldText = await getLastMessage();
 	let time = 0;
-	while(time <= 120) {
+	while(time <= paramVars.runtime) {
+		if(stop) {
+			return;
+		}
 		recentText = await getLastMessage();
 		time++;
 		if(oldText != recentText) {
@@ -34,7 +39,7 @@ async function getLastMessage() {
 			await textField.sendKeys(recentText);
 			await textField.sendKeys(Key.RETURN);
 		}
-		await sleep(250);
+		await sleep(paramVars.checkTime);
 	}
 	console.log('Finished!');
 })();

@@ -11,19 +11,6 @@ const rl = readline.createInterface({
 	output: process.stdout
 });
 
-async function isFile(file) {
-	const stat = fs.lstat(file, (err, stats) => {
-		try {
-			if(stats.isFile()) {
-				return true;
-			}
-		} catch(e) {
-			console.log(`${file} is not a file!`);
-			return false;
-		}
-	});
-}
-
 function promptInput(q) {
 	return new Promise(resolve => {
 		rl.question(q, (answer) => {
@@ -32,44 +19,83 @@ function promptInput(q) {
 	});
 }
 
+async function checkFile(inputFile, success, err) {
+	await fs.promises.stat(inputFile)
+		.then(async stat => {
+			await success(stat);
+		})
+		.catch(errMsg => {
+			err(errMsg);
+		});
+}
+
+async function getParams(params, descriptions) {
+	let paramVarObj = {}
+	for(let p of params) {
+		let val = await promptInput(`${p} (${descriptions[params.indexOf(p)]}): `);
+		paramVarObj[p.slice(p.indexOf('.') + 1)] = val;
+	}
+	return paramVarObj
+}
+
 
 (async function main() {
 	console.log("Initializing Selenium....");
 	const opts = new Options(Options.firefox());
 	opts.setProfile("/Users/kenny/Library/Application Support/Firefox/Profiles/n0dyd94w.default-1595287968316");
-	const driver = await new Builder().forBrowser("firefox").setFirefoxOptions(opts).build();
-	let defaultFile, data, func, keyword;
-
+	let openBrowser = await promptInput("Do you want to open the browser? (y/n): ");
+	let desicion = false;
+	let driver;
+	while(!desicion) {
+		if(openBrowser === 'y') {
+			console.log('Opening browser...')
+			driver = await new Builder().forBrowser("firefox").setFirefoxOptions(opts).build();
+			desicion = true;
+		} else if(openBrowser === 'n') {
+			driver = null;
+			desicion = true;
+		} else {
+			console.log('Not valid input! Type y or n!');
+			openBrowser = await promptInput('Open the browser?: ');
+		}
+		
+	}
+	let defaultFile, data, func, keyword, params, regex, paramVars, descriptions, stop;
 	let commands = {
-		'run' : async (inputFile) => {
-			if(isFile(inputFile)) {
-				data = await fs.promises.readFile(inputFile, "utf8");
-				func = new Function("require", "driver", data);
-				func(require, driver);
-				console.log(`File ${inputFile} launched!`);
-			}
-		},
-		'' : async () => {
-			if(defaultFile != undefined) {
-				commands.run(defaultFile);
-			} else {
-				console.log('No default set! Use "default ${keyword}" to set a default');
-			}
+		'r' : async (inputFile) => {
+			await checkFile(inputFile, async (stat) => {
+				if(stat.isFile()) {
+					stop = false;
+					data = await fs.promises.readFile(inputFile, "utf8");
+					if(regex = (/DESCRIPTIONS = \[.+\];/).exec(data)) {
+						params = regex[0].slice(14, regex[0].indexOf(']')).split(', ');
+						descriptions = params;
+					}
+					if(regex = (/PARAMETERS = \[.+\];/).exec(data)) {
+						params = regex[0].slice(14, regex[0].indexOf(']')).split(', ');
+						console.log('This file takes parameters. Enter them here: ')
+						paramVars = await getParams(params, descriptions);
+					}
+					func = new Function("require", "driver", "paramVars", "stop", data);
+					func(require, driver, paramVars, stop);
+					console.log(`File ${inputFile} launched!`);
+				}
+			}, (errMsg) => {
+				// console.log(`${inputFile} is not a file!`);
+				console.log(errMsg);
+			});
 		},
 		'quit' : async () => {
 			done = true;
 			rl.close();
-			await driver.quit();
+			if(driver) await driver.quit();
 			console.log("Goodbye!");
 		},
-		'default' : async (input) => {
-			if(isFile(input)) {
-				defaultFile = input;
-				console.log(`Successfully set ${input} to default file to run!`);
-			}
+		'stop' : () => {
+			stop = true;
 		},
 		'help' : () => {
-			console.log('Commands : \ndefault ${file}: Set file to run when no command is given.\nquit: Shut down browser ')
+			console.log('Commands : \ndefault ${file}: Set file to run when no command is given.\nquit: Shut down browser & prompt loop\nr ${file}: Run a file!')
 		}
 	};
 
@@ -82,7 +108,7 @@ function promptInput(q) {
 		input = input.join("");
 		for(let cmd of Object.keys(commands)) {
 			if(keyword === cmd) {
-				commands[cmd](input);
+				await commands[cmd](input);
 			}
 		}
 		// let cmd = await promptInput("Enter a command: ");
