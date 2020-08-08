@@ -20,9 +20,9 @@ function promptInput(q) {
 
 (async function main() {
 	let done = false;
+	let context = {stopScript: false};
 	while (!done) {
 		let cmd = await promptInput("Enter a command: ");
-		let context = {stopScript: false};
 
 		if (cmd === "quit") {
 			done = true;
