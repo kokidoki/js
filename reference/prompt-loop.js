@@ -27,17 +27,21 @@ function promptInput(q) {
 			rl.close();
 			console.log("Good bye!");
 		} else {
-			if (cmd === "") {
-				cmd = "test.js";
-			}
-			console.log("Processing cmd: ", cmd);
-			const fname = cmd;
-			const data = await fs.promises.readFile(fname, "utf8");
+			try {
+				if (cmd === "") {
+					cmd = "test.js";
+				}
+				console.log("Processing cmd: ", cmd);
+				const args = cmd.split(" ");
+				const fname = args[0];
+				const data = await fs.promises.readFile(fname, "utf8");
 
-			// console.log(data);
-			const driver = {test: "foo"};
-			const func = new Function("driver", data);
-			func(driver);
+				// console.log(data);
+				const func = new Function("require", "args", data);
+				func(require, args.slice(1));
+			} catch (err) {
+				console.log("ERROR: failed to exe function: ", err);
+			}
 		}
 	}
 })();
