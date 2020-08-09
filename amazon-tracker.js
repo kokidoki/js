@@ -22,32 +22,34 @@ for(let item of data.priceData) {
 }
 let PARAMETERS = [paramVars.checkTime, paramVars.addedUrls, paramVars.removedUrls];
 let DESCRIPTIONS = ['How often to check prices', 'Urls of products you want to add', 'The urls you want to remove:'];
-if(paramVars.addedUrls) {
-	await (async function addUrls() {
-		for(let url of paramVars.addedUrls.split(' ')) {
-			await driver.get(url);
-			const name = await (driver.wait(until.elementLocated(By.css('#productTitle')))).getText();
-			const product = {"url": `${url}`,"product-name": `${name.trim()}`,"price-history": []};
-			data.priceData.push(product);
-			urlList.push(product.url);
-		}
-	})();
-}
-if(paramVars.removedUrls) {
-	for(let url of paramVars.removedUrls.split(' ')) {
-		for(let item of data.priceData) {
-			if(item.url === url) {
-				data.priceData.splice(data.priceData.indexOf(item), 1);
-				urlList.splice(urlList.indexOf('url'), 1);
+(async function manageUrls() {
+	if(paramVars.addedUrls) {
+		await (async function addUrls() {
+			for(let url of paramVars.addedUrls.split(' ')) {
+				await driver.get(url);
+				const name = await (driver.wait(until.elementLocated(By.css('#productTitle')))).getText();
+				const product = {"url": `${url}`,"product-name": `${name.trim()}`,"price-history": []};
+				data.priceData.push(product);
+				urlList.push(product.url);
+			}
+		})();
+	}
+	if(paramVars.removedUrls) {
+		for(let url of paramVars.removedUrls.split(' ')) {
+			for(let item of data.priceData) {
+				if(item.url === url) {
+					data.priceData.splice(data.priceData.indexOf(item), 1);
+					urlList.splice(urlList.indexOf('url'), 1);
+				}
 			}
 		}
 	}
-}
-fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
-	if(err) {
-		throw err;
-	}
-});
+	fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
+		if(err) {
+			throw err;
+		}
+	});
+})();
 (async function() {
 	while(time <= 1) {
 		time++;
