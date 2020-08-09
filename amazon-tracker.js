@@ -20,8 +20,8 @@ async () => await getData()
 for(let item of data.priceData) {
 	urlList.push(item.url);
 }
-let PARAMETERS = [paramVars.checkTime, paramVars.addedUrls, paramVars.removedUrls];
-let DESCRIPTIONS = ['How often to check prices', 'Urls of products you want to add', 'The urls you want to remove:'];
+let PARAMETERS = [paramVars.checkTime, paramVars.runTime, paramVars.addedUrls, paramVars.removedUrls];
+let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the program should run(1 run = check time)', 'Urls of products you want to add', 'The urls you want to remove:'];
 (async function manageUrls() {
 	if(paramVars.addedUrls) {
 		await (async function addUrls() {
@@ -51,25 +51,30 @@ let DESCRIPTIONS = ['How often to check prices', 'Urls of products you want to a
 	});
 })();
 (async function() {
-	while(time <= 1) {
+	while(time < paramVars.runTime) {
 		time++;
 		for(let url of urlList) {
 			await driver.get(url);
 			await getData();
 			for(let item of data.priceData) {
 				if(item.url === url) {
-					let entry = {};
-					entry[data.today] = data.price;
-					item['price-history'].push(entry);
+					let priceHistory = item['price-history'];
+					if(priceHistory[priceHistory.length - 1] !== data.price || priceHistory.length === 0) {
+						let entry = {};
+						entry.datetime = data.today;
+						entry.price = data.price.slice(1);
+						item['price-history'].push(entry);
+						await fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
+							if(err) {
+								throw err;
+							}
+						});	
+					}
+
 				}
 			}
-			await fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
-				if(err) {
-					throw err;
-				}
-			});
 		}
-		await sleep(0.5);
+		await sleep(paramVars.checkTime);
 	}
 	console.log('finished!');
 })();
