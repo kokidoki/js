@@ -1,4 +1,4 @@
-const {Builder, By, until, Key} = require("selenium-webdriver");
+const {By, until, Key} = require("selenium-webdriver");
 
 function sleep(ms) {
 	return new Promise(resolve => {
