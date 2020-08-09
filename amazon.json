@@ -1,12 +1,48 @@
 [
   {
-    "url": "https://www.amazon.com/Cancelling-Headphones-TaoTronics-Bluetooth-Wireless/dp/B082LQDT2C/ref=cm_cr_arp_d_product_top?ie=UTF8",
-    "product-name": "Active Noise Cancelling Headphones, TaoTronics Bluetooth Headphones [2020 Version] Over Ear Wireless Headphones 40H Playtime Type-C Fast Charging Bluetooth 5.0 CVC 8.0 Mic for Online Class Black",
-    "price-history": [
+        "url": "https://www.amazon.com/Cancelling-Headphones-TaoTronics-Bluetooth-Wireless/dp/B082LQDT2C/ref=cm_cr_arp_d_product_top?ie=UTF8",
+        "product-name": "Active Noise Cancelling Headphones, TaoTronics Bluetooth Headphones [2020 Version] Over Ear Wireless Headphones 40H Playtime Type-C Fast Charging Bluetooth 5.0 CVC 8.0 Mic for Online Class Black",
+        "price-history": [
+            {
+              "datetime": "Sun Aug 08 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "49.99"
+            },
+            {
+              "datetime": "Sun Aug 09 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "60.99"
+            },
+            {
+              "datetime": "Sun Aug 09 2020 15:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "61.99"
+            }
+        ]
+      },
       {
-        "Sun Aug 08 2020 14:04:55 GMT-0400 (Eastern Daylight Time)": "$49.99",
-        "Sun Aug 09 2020 14:04:55 GMT-0400 (Eastern Daylight Time)": "$60.99"
+        "url": "https://www.amazon.com/Cancelling-Headphones-TaoTronics-Bluetooth-Wireless/dp/B082LQDT2C/ref=cm_cr_arp_d_product_top?ie=UTF8",
+        "product-name": "Product2",
+        "price-history": [
+            {
+              "datetime": "Sun Aug 01 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "49.00"
+            },
+            {
+              "datetime": "Sun Aug 02 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "11.99"
+            }
+        ]
+      },
+      {
+        "url": "https://www.amazon.com/Cancelling-Headphones-TaoTronics-Bluetooth-Wireless/dp/B082LQDT2C/ref=cm_cr_arp_d_product_top?ie=UTF8",
+        "product-name": "Product3",
+        "price-history": [
+            {
+              "datetime": "Sun Aug 01 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "49.00"
+            },
+            {
+              "datetime": "Sun Aug 02 2020 14:04:55 GMT-0400 (Eastern Daylight Time)",
+              "price": "11.99"
+            }
+        ]
       }
-    ]
-  }
 ]

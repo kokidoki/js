@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Amazon Viewer</title>
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bulma">
+	<script type="text/javascript" src="https://unpkg.com/vue"></script>
+</head>
+<body>
+
+<div id="app">
+	<section class="section">
+	<h1 class="title">Price Tracker</h1>
+	<div class="content">
+		<table class="table" v-for="row in priceTrackerDataList">
+			<tr class="tr">
+				<td colspan="2" class="td" style="font-weight: bold;">{{ row["product-name"] }}</td>
+			</tr>
+			<tr class="tr">
+				<td class="td" style="width: 200px;">Price</td>
+				<td class="td">DateTime</td>
+			</tr>
+			<tr class="tr" v-for="priceRow in row['price-history']">
+				<td class="td" style="width: 200px;">${{ priceRow.price }}</td>
+				<td class="td">{{ priceRow.datetime }}</td>
+			</tr>
+		</table>
+	</div>
+	</section>
+</div>
+
+<script>		
+		const app = new Vue({
+			el: "#app",
+			data: {
+				priceTrackerDataList: []
+			},
+			created: function () {
+				const fetchData = () => {
+					fetch("http://localhost:8000/amazon.json").then(response => {
+						response.json().then(data => {
+							console.log(data);
+							this.priceTrackerDataList = data;
+
+							setTimeout(fetchData, 1000);
+						});
+					});
+				};
+				fetchData();
+			}
+		});
+</script>
+
+</body>
+</html>
