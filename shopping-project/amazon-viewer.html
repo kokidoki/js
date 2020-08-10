@@ -14,7 +14,7 @@
 	<div class="content">
 		<table class="table" v-for="row in priceTrackerDataList">
 			<tr class="tr">
-				<td colspan="2" class="td" style="font-weight: bold;">{{ row["product-name"] }}</td>
+				<td colspan="3" class="td" style="font-weight: bold;">{{ row["product-name"] }}</td>
 			</tr>
 			<tr class="tr">
 				<td class="td" style="width: 200px;">Price</td>
@@ -24,7 +24,7 @@
 			<tr class="tr" v-for="priceRow in row['price-history']">
 				<td class="td" style="width: 200px;">${{ priceRow.price }}</td>
 				<td class="td">{{ priceRow.datetime }}</td>
-				<td class="td">{{ row.source }}</td>
+				<td class="td" v-bind:style="{color: (row.source === 'amazon') ? 'green' : 'red'}">{{ row.source }}</td>
 			</tr>
 		</table>
 	</div>
