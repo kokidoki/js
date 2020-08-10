@@ -11,11 +11,11 @@ function sleep(m) {
 async function getData() {
 	data.today = new Date();
 	data.price = await (driver.wait(until.elementLocated(By.css('#priceblock_ourprice')))).getText();
-	data.priceData = JSON.parse(await fs.promises.readFile('amazon.JSON', 'utf8'));
+	data.priceData = JSON.parse(await fs.promises.readFile('item-data.JSON', 'utf8'));
 }
 
 let data = {}, time = 0, urlList = [];
-data.priceData = JSON.parse(fs.readFileSync('amazon.JSON', 'utf8'));
+data.priceData = JSON.parse(fs.readFileSync('item-data.JSON', 'utf8'));
 async () => await getData()
 for(let item of data.priceData) {
 	urlList.push(item.url);
@@ -44,7 +44,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 			}
 		}
 	}
-	fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
+	fs.writeFile('item-data.JSON', JSON.stringify(data.priceData), 'utf8', (err) => {
 		if(err) {
 			throw err;
 		}
@@ -64,7 +64,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 						entry.datetime = data.today;
 						entry.price = data.price.slice(1);
 						item['price-history'].push(entry);
-						await fs.writeFile('amazon.json', JSON.stringify(data.priceData), 'utf8', (err) => {
+						await fs.writeFile('item-data.JSON', JSON.stringify(data.priceData), 'utf8', (err) => {
 							if(err) {
 								throw err;
 							}

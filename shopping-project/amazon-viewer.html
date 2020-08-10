@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Amazon Viewer</title>
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bulma">
-	<script type="text/javascript" src="https://unpkg.com/vue"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
 
@@ -19,10 +19,12 @@
 			<tr class="tr">
 				<td class="td" style="width: 200px;">Price</td>
 				<td class="td">DateTime</td>
+				<td class="td">Store</td>
 			</tr>
 			<tr class="tr" v-for="priceRow in row['price-history']">
 				<td class="td" style="width: 200px;">${{ priceRow.price }}</td>
 				<td class="td">{{ priceRow.datetime }}</td>
+				<td class="td">{{ row.source }}</td>
 			</tr>
 		</table>
 	</div>
@@ -37,9 +39,8 @@
 			},
 			created: function () {
 				const fetchData = () => {
-					fetch("http://localhost:8000/amazon.json").then(response => {
+					fetch("http://localhost:8000/shopping-project/item-data.json").then(response => {
 						response.json().then(data => {
-							console.log(data);
 							this.priceTrackerDataList = data;
 
 							setTimeout(fetchData, 1000);
