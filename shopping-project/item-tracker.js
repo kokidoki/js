@@ -20,7 +20,7 @@ const selectors = {
 }
 
 async function getData(source) {
-	data.today = new Date();
+	data.today = new Date().toLocaleString();;
 	data.price = await (driver.wait(until.elementLocated(By.css(selectors[source].price)))).getText();
 	data.priceData = JSON.parse(await fs.promises.readFile('shopping-project/item-data.json', 'utf8'));
 }
@@ -84,7 +84,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 				for(let item of data.priceData) {
 					if(item.url === url) {
 						let priceHistory = item['price-history'];
-						if(priceHistory[priceHistory.length - 1].price !== data.price.slice(1) || priceHistory.length === 0) {
+						if(priceHistory.length === 0 || priceHistory[priceHistory.length - 1].price !== data.price.slice(1)) {
 							let entry = {};
 							entry.datetime = data.today;
 							entry.price = data.price.slice(1);
