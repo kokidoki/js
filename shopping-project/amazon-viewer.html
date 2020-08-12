@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Amazon Viewer</title>
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bulma">
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script type="text/javascript" src="../node_modules/vue/dist/vue.js"></script>
 </head>
 <body>
 
@@ -14,17 +14,19 @@
 	<div class="content">
 		<table class="table" v-for="row in priceTrackerDataList">
 			<tr class="tr">
-				<td colspan="3" class="td" style="font-weight: bold;">{{ row["product-name"] }}</td>
+				<td colspan="3" class="td" style="font-weight: bold;">
+				<a v-bind:href="row.url" target="_blank">{{ row["product-name"] }}</a>
+				</td>
 			</tr>
 			<tr class="tr">
 				<td class="td" style="width: 200px;">Price</td>
 				<td class="td">DateTime</td>
-				<td class="td">Store</td>
+				<td class="td">Price Change</td>
 			</tr>
 			<tr class="tr" v-for="priceRow in row['price-history']">
 				<td class="td" style="width: 200px;">${{ priceRow.price }}</td>
 				<td class="td">{{ priceRow.datetime }}</td>
-				<td class="td" v-bind:style="{color: (row.source === 'amazon') ? 'green' : 'red'}">{{ row.source }}</td>
+				<td class="td" v-bind:style="colorChange(priceRow)">{{signDirection(priceRow)}}${{ priceRow.difference }}</td>
 			</tr>
 		</table>
 	</div>
@@ -37,13 +39,40 @@
 			data: {
 				priceTrackerDataList: []
 			},
+			methods: {
+				colorChange: function(priceRow) {
+					let color, change = priceRow.difference;
+					if(change > 0) {
+						color = 'red';
+					} else if(change < 0){
+						color = 'green';
+					} else {
+						color = 'gray';
+					}
+					return {color: color};
+				},
+				signDirection: function(priceRow) {
+					let change = priceRow.difference;
+					if(change > 0) {
+						return '▲';
+					} else if(change < 0){
+						return '▼';
+					}
+				}
+			},
 			created: function () {
 				const fetchData = () => {
 					fetch("http://localhost:8000/shopping-project/item-data.json").then(response => {
 						response.json().then(data => {
 							this.priceTrackerDataList = data;
-
-							setTimeout(fetchData, 1000);
+							for(let product of this.priceTrackerDataList) {
+								let history = product['price-history'];
+								history[0].difference = 0.00;
+								for(let x = 1; x < history.length; x++) {
+									history[x].difference = (history[x].price - history[x - 1].price).toFixed(2);
+								}
+							}
+							setTimeout(fetchData, 60000);
 						});
 					});
 				};

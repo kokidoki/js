@@ -12,7 +12,8 @@
   "dependencies": {
     "cowsay": "^1.4.0",
     "lodash": "^4.17.19",
-    "selenium-webdriver": "^4.0.0-alpha.7"
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "mocha": "^8.1.1"

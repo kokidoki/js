@@ -36,11 +36,8 @@ let data = {}, time = 0, urlList = {target: [], amazon: []}, catagory;
 data.priceData = JSON.parse(fs.readFileSync('shopping-project/item-data.json', 'utf8'));
 for(let item of data.priceData) {
 	item = item.url;
-	if(item.match(/target\.com/)) {
-		urlList.target.push(item);
-	} else {
-		urlList.amazon.push(item.url);
-	}
+	catagory = findCatagory(item);
+	urlList[catagory].push(item);
 }
 
 let PARAMETERS = [paramVars.checkTime, paramVars.runTime, paramVars.addedUrls, paramVars.removedUrls];
@@ -52,7 +49,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 				catagory = findCatagory(url);
 				await driver.get(url);
 				const name = await (driver.wait(until.elementLocated(By.css(selectors[catagory].name)))).getText();
-				const product = {"url": `${url}`,"product-name": `${name.trim()}`,"price-history": [],"source": `${catagory}`};
+				const product = {"url": `${url}`,"product-name": `${name.trim()}`,"price-history": [],"price-change": []};
 				data.priceData.push(product);
 				urlList[catagory].push(url);
 				console.log('Added url to tracking list!');
@@ -65,7 +62,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 				if(item.url === url) {
 					data.priceData.splice(data.priceData.indexOf(item), 1);
 					catagory = findCatagory(url);
-					urlList[catagory].splice(urlList[catagory].indexOf('url'), 1);
+					urlList[catagory].splice(urlList[catagory].indexOf(url), 1);
 					console.log('Removed url from tracking list!');
 				}
 			}
@@ -87,7 +84,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 				for(let item of data.priceData) {
 					if(item.url === url) {
 						let priceHistory = item['price-history'];
-						if(priceHistory[priceHistory.length - 1] !== data.price || priceHistory.length === 0) {
+						if(priceHistory[priceHistory.length - 1].price !== data.price.slice(1) || priceHistory.length === 0) {
 							let entry = {};
 							entry.datetime = data.today;
 							entry.price = data.price.slice(1);
@@ -106,18 +103,3 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 	}
 	console.log('finished!');
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
