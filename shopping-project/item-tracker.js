@@ -16,6 +16,10 @@ const selectors = {
 	'target.com': {
 		price: '.style__PriceFontSize-gob4i1-0',
 		name: 'h1.Heading__StyledHeading-sc-1m9kw5a-0 > span'
+	},
+	'gasbuddy.com': {
+		price: 'div.carousel__scrollContainer___hDjMb:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > span:nth-child(1)',
+		name: 'h2.header__evergreen___2DD39:nth-child(1) > span'
 	}
 }
 
@@ -30,10 +34,6 @@ function findCatagory(url) {
 		let regex = new RegExp(catagory);
 		if(url.match(regex)) return catagory
 	}
-	// if(url.match(/target\.com/)) {
-	// 	return 'target';
-	// }
-	// return 'amazon';
 }
 
 
@@ -85,7 +85,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 (async function() {
 	while(time < paramVars.runTime) {
 		time++;
-		for(let store in urlList) {
+		for(let store of Object.keys(urlList)) {
 			for(let url of urlList[store]) {
 				await driver.get(url);
 				await getData(store);
@@ -111,7 +111,5 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 	}
 	console.log('finished!');
 })();
-
-
 
 
