@@ -9,11 +9,11 @@ function sleep(m) {
 }
 
 const selectors = {
-	amazon: {
+	'amazon.com': {
 		price: '#priceblock_ourprice',
 		name: '#productTitle'
 	},
-	target: {
+	'target.com': {
 		price: '.style__PriceFontSize-gob4i1-0',
 		name: 'h1.Heading__StyledHeading-sc-1m9kw5a-0 > span'
 	}
@@ -26,20 +26,28 @@ async function getData(source) {
 }
 
 function findCatagory(url) {
-	if(url.match(/target\.com/)) {
-		return 'target';
+	for(let catagory in selectors) {
+		let regex = new RegExp(catagory);
+		if(url.match(regex)) return catagory
 	}
-	return 'amazon';
+	// if(url.match(/target\.com/)) {
+	// 	return 'target';
+	// }
+	// return 'amazon';
 }
 
-let data = {}, time = 0, urlList = {target: [], amazon: []}, catagory;
+
+
+let data = {}, time = 0, urlList = {}, catagory;
+for(let catagory in selectors) {
+	urlList[catagory] = [];
+}
 data.priceData = JSON.parse(fs.readFileSync('shopping-project/item-data.json', 'utf8'));
 for(let item of data.priceData) {
 	item = item.url;
 	catagory = findCatagory(item);
 	urlList[catagory].push(item);
 }
-
 let PARAMETERS = [paramVars.checkTime, paramVars.runTime, paramVars.addedUrls, paramVars.removedUrls];
 let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the program should run(1 run = check time)', 'Urls of products you want to add', 'The urls you want to remove:'];
 (async function manageUrls()  {
@@ -103,3 +111,7 @@ let DESCRIPTIONS = ['How often to check prices(In minutes)', 'How many times the
 	}
 	console.log('finished!');
 })();
+
+
+
+
