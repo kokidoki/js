@@ -13,21 +13,23 @@
 	<h1 class="title">Price Tracker</h1>
 	<div class="content">
 		<table class="table" v-for="row in priceTrackerDataList">
-			<tr class="tr">
-				<td colspan="3" class="td" style="font-weight: bold;">
-				<a v-bind:href="row.url" target="_blank">{{ row["product-name"] }}</a>
-				</td>
-			</tr>
-			<tr class="tr">
-				<td class="td" style="width: 200px;">Price</td>
-				<td class="td">DateTime</td>
-				<td class="td">Price Change</td>
-			</tr>
-			<tr class="tr" v-for="priceRow in row['price-history']">
-				<td class="td" style="width: 200px;">${{ priceRow.price }}</td>
-				<td class="td">{{ priceRow.datetime }}</td>
-				<td class="td" v-bind:style="colorChange(priceRow)">{{signDirection(priceRow)}}${{ priceRow.difference }}</td>
-			</tr>
+			<tbody>
+				<tr>
+					<td colspan="3" style="font-weight: bold;">
+					<a v-bind:href="row.url" target="_blank">{{ row["product-name"] }}</a>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 200px;">Price</td>
+					<td>DateTime</td>
+					<td>Price Change</td>
+				</tr>
+				<tr v-for="priceRow in row['price-history']">
+					<td style="width: 200px;">${{ priceRow.price }}</td>
+					<td>{{ priceRow.datetime }}</td>
+					<td v-bind:style="colorChange(priceRow)">{{signDirection(priceRow)}} {{formattedPrice(priceRow)}}</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 	</section>
@@ -58,6 +60,11 @@
 					} else if(change < 0){
 						return '▼';
 					}
+				},
+				formattedPrice: function(priceRow) {
+					let fmt = new Intl.NumberFormat("en-US", {style: "currency", currency: "USD"});
+					let fprice = fmt.format(priceRow.difference);
+					return fprice;
 				}
 			},
 			created: function () {
