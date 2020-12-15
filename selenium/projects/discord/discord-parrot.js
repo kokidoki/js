@@ -30,6 +30,7 @@ let DESCRIPTIONS = ['How often do you want the parrot to check for new messages(
 		recentText = await getLastMessage();
 		time++;
 		if(oldText != recentText) {
+			console.log('test');
 			let textField = await driver.wait(until.elementLocated(By.css('.slateTextArea-1Mkdgw')));
 			oldText = await getLastMessage();
 			await textField.click();
